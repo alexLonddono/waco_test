@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:waco_test/src/services/authentication_service.dart';
+import 'package:waco_test/core/models/productModel.dart';
+import 'package:waco_test/core/providers/product_provider.dart';
+import 'package:waco_test/src/pages/editProduct.dart';
+import 'package:waco_test/core/services/authentication_service.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    //final products = Provider.of<List<Product>>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +27,24 @@ class HomePage extends StatelessWidget {
               label: Text('Cerrar sesión')),
         ],
       ),
-      body: Text('Hey'),
+      body: StreamBuilder<List<Product>>(
+          stream: productProvider.product,
+          builder: (context, snapshot) {
+            return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    trailing: Icon(Icons.edit),
+                    title: Text(snapshot.data[index].name),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => EditProduct(
+                                product: snapshot.data[index],
+                              )));
+                    },
+                  );
+                });
+          }),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

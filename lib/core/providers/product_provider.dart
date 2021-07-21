@@ -5,42 +5,43 @@ import 'package:waco_test/core/services/firestore_service.dart';
 
 class ProductProvider with ChangeNotifier {
   final firestoreService = FirestoreService();
-  String? _id = '';
-  String? _name = '';
-  String? _description = '';
-  int? _stock = 0;
-  int? _price = 0;
+  String _id = '';
+  String _name = '';
+  String _description = '';
+  int _stock = 0;
+  int _price = 0;
   var uuid = Uuid();
 
   // Getters
-  String? get name => _name;
-  String? get description => _description;
-  int? get stock => _stock;
-  int? get price => _price;
-  //Stream<List<Product>> get product => firestoreService.getProducts();
+  String get name => _name;
+  String get description => _description;
+  int get stock => _stock;
+  int get price => _price;
+  Stream<List<Product>> get product => firestoreService.getProducts();
 
   // Setters
-  changeName(String value) {
+  set changeName(String value) {
     _name = value;
     notifyListeners();
   }
 
-  changeDescription(String value) {
+  set changeDescription(String value) {
     _description = value;
     notifyListeners();
   }
 
-  changeStock(String value) {
+  set changeStock(String value) {
     _stock = int.parse(value);
     notifyListeners();
   }
 
-  changePrice(String value) {
+  set changePrice(String value) {
     _price = int.parse(value);
     notifyListeners();
   }
 
-  loadValues(Product product) {
+  // Load product
+  loadAll(Product product) {
     if (product != null) {
       _id = product.id;
       _name = product.name;
@@ -56,25 +57,26 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  // Add - Update Method
   saveProduct() {
-    print(_id);
     if (_id == null) {
+      // Add
       var newProduct = Product(
-          name: name,
-          description: description,
-          stock: stock,
-          price: price,
-          id: uuid.v4());
-      firestoreService.saveProduct(newProduct);
+          name: _name,
+          description: _description,
+          stock: _stock,
+          price: _price,
+          id: uuid.v1());
+      firestoreService.setProduct(newProduct);
     } else {
-      //Update
+      // Update
       var updatedProduct = Product(
-          name: name,
-          description: description,
-          stock: stock,
-          price: price,
-          id: uuid.v4());
-      firestoreService.saveProduct(updatedProduct);
+          name: _name,
+          description: _description,
+          stock: _stock,
+          price: _price,
+          id: _id);
+      firestoreService.setProduct(updatedProduct);
     }
   }
 

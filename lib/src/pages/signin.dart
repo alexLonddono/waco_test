@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:waco_test/src/pages/signup.dart';
-import 'package:waco_test/src/services/authentication_service.dart';
+import 'package:waco_test/core/services/authentication_service.dart';
 
 class SignInPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();

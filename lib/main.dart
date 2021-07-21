@@ -4,10 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:waco_test/routes.dart';
 import 'package:waco_test/core/providers/product_provider.dart';
-import 'package:waco_test/core/services/firestore_service.dart';
 import 'package:waco_test/src/pages/home.dart';
 import 'package:waco_test/src/pages/signin.dart';
-import 'package:waco_test/src/services/authentication_service.dart';
+import 'package:waco_test/core/services/authentication_service.dart';
 
 //Initialize Firebase App
 Future<void> main() async {
@@ -19,8 +18,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final firestoreService = FirestoreService();
-
     return MultiProvider(
       providers: [
         Provider<AuthenticationService>(
@@ -32,10 +29,6 @@ class MyApp extends StatelessWidget {
             initialData: null),
         // Firestore providers
         ChangeNotifierProvider(create: (context) => ProductProvider()),
-        StreamProvider(
-          create: (_) => firestoreService.getProducts(),
-          initialData: null,
-        ),
       ],
       child: MaterialApp(
         title: 'Material App',
@@ -51,7 +44,7 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User?>();
+    final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
       return HomePage();
