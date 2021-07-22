@@ -37,7 +37,21 @@ class HomePage extends StatelessWidget {
             stream: productProvider.product,
             builder: (context, snapshot) {
               if (snapshot.data == null) {
-                return Card(child: Text(''));
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Loading data...',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 20.0)),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
               } else {
                 return ListView.builder(
                     itemCount: snapshot.data.length,
