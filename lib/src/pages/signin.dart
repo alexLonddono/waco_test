@@ -1,49 +1,122 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:waco_test/components/button.dart';
+import 'package:waco_test/components/input_style.dart';
 import 'package:waco_test/src/pages/signup.dart';
 import 'package:waco_test/core/services/authentication_service.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        actions: [
-          TextButton.icon(
-              onPressed: () {
-                Navigator.push(context,
-                    new MaterialPageRoute(builder: (context) => SignUpPage()));
-              },
-              icon: Icon(Icons.login),
-              label: Text('Registrarse')),
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextField(
-            controller: emailController,
-            decoration: InputDecoration(
-              labelText: 'Email',
+      backgroundColor: Colors.white,
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 60.0, horizontal: 50.0),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/bg.jpg'), fit: BoxFit.cover),
+        ),
+        child: ListView(
+          children: [
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 58.0),
+                  Image(
+                    image: AssetImage("assets/waco_logo.png"),
+                    height: 65.0,
+                  ),
+                  SizedBox(height: 80.0),
+                  Text('Login in to Waco Services',
+                      style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter an email';
+                        }
+                        return null;
+                      },
+                      style: TextStyle(color: Colors.white),
+                      controller: emailController,
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'Email')),
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                    validator: (val) => val.length < 6
+                        ? 'Enter a password with at least 6 char'
+                        : null,
+                    style: TextStyle(color: Colors.white),
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration:
+                        textInputDecoration.copyWith(hintText: 'Password'),
+                  ),
+                  SizedBox(height: 20.0),
+                  RaisedGradientButton(
+                    child: Text(
+                      'Sign in',
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    gradient: LinearGradient(
+                        colors: <Color>[Color(0xFF00ff68), Color(0xFF00e6e3)]),
+                    onPressed: () {
+                      setState(() {
+                        if (_formKey.currentState.validate()) {
+                          context.read<AuthenticationService>().signIn(
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim());
+                        }
+                      });
+                    },
+                  ),
+                  SizedBox(height: 20.0),
+                  Container(
+                    child: Column(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) => SignUpPage()));
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: RichText(
+                              text: TextSpan(
+                                  style: TextStyle(color: Colors.white),
+                                  children: [
+                                    TextSpan(text: 'Forgot password? '),
+                                    TextSpan(
+                                        text: 'Sign up to Waco',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))
+                                  ]),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          TextField(
-            controller: passwordController,
-            decoration: InputDecoration(labelText: 'Password'),
-          ),
-          ElevatedButton(
-              onPressed: () {
-                context.read<AuthenticationService>().signIn(
-                    email: emailController.text.trim(),
-                    password: passwordController.text.trim());
-              },
-              child: Text('Sign in'))
-        ],
+          ],
+        ),
       ),
     );
   }
